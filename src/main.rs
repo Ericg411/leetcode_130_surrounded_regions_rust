@@ -1,50 +1,58 @@
 pub struct Solution;
 
 impl Solution {
-    pub fn solve(board: &mut Vec<Vec<char>>) {
-        if board.is_empty() {
+pub fn solve(board: &mut Vec<Vec<char>>) {
+        let rows = board.len();
+        if rows == 0 {
             return;
         }
-
-        let rows = board.len();
         let cols = board[0].len();
 
-        fn dfs(board: &mut Vec<Vec<char>>, r: isize, c: isize, rows: usize, cols: usize) {
-            if r < 0 || r >= rows as isize || c < 0 || c >= cols as isize || board[r as usize][c as usize] != 'O' {
+        fn dfs(board: &mut Vec<Vec<char>>, r: usize, c: usize, rows: usize, cols: usize) {
+            if r >= rows || c >= cols || board[r][c] != 'O' {
                 return;
             }
-
-            board[r as usize][c as usize] = 'T';
-
+            board[r][c] = 'T';
             let directions = [(1,0),(-1,0),(0,1),(0,-1)];
             for (dr, dc) in directions.iter() {
-                dfs(board, r + dr, c + dc, rows, cols);
+                let nr = r as isize + dr;
+                let nc = c as isize + dc;
+                if nr >= 0 && nr < rows as isize && nc >= 0 && nc < cols as isize 
+                {
+                    dfs(board, nr as usize, nc as usize, rows, cols);
+                } 
             }
         }
 
         for i in 0..rows {
-            if board[i][0] == 'O' {
-                dfs(board, i as isize, 0, rows, cols);
+            if board[i][0] == 'O' 
+            {
+                dfs(board, i, 0, rows, cols);
             }
-            if board[i][cols - 1] == 'O' {
-                dfs(board, i as isize, (cols - 1) as isize, rows, cols);
-            }
-        }
-        for j in 0..cols {
-            if board[0][j] == 'O' {
-                dfs(board, 0, j as isize, rows, cols);
-            }
-            if board[rows - 1][j] == 'O' {
-                dfs(board, (rows - 1) as isize, j as isize, rows, cols);
+            if board[i][cols - 1] == 'O'
+             {
+                dfs(board, i, cols - 1, rows, cols);
             }
         }
-
-        for r in 0..rows {
-            for c in 0..cols {
-                if board[r][c] == 'O' {
-                    board[r][c] = 'X';
-                } else if board[r][c] == 'T' {
-                    board[r][c] = 'O';
+        for j in 0..cols{
+            if board[0][j] == 'O' 
+            {
+                dfs(board, 0, j, rows, cols);
+            }
+            if board[rows - 1][j] == 'O' 
+            {
+                dfs(board, rows - 1, j, rows, cols);
+            }
+        }
+        for i in 0..rows {
+            for j in 0..cols {
+                if board[i][j] == 'O' 
+                {
+                    board[i][j] = 'X';
+                }
+                else if board[i][j] == 'T' 
+                {
+                    board[i][j] = 'O';
                 }
             }
         }
@@ -106,4 +114,8 @@ mod tests {
         Solution::solve(&mut board);
         assert_eq!(board, expected);
     }
+}
+
+pub fn main() {
+    
 }
